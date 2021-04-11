@@ -3,7 +3,9 @@
 # See http://www.sublimetext.com/docs/3/syntax.html
 name: EBXVEXT
 comment: "EBX Syntax: version 1.0"
-file_extensions: [ txt, ebx ]
+file_extensions:
+  - txt
+  - ebx
 scope: source.ebx
 
 variables:
