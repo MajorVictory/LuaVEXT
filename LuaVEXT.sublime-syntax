@@ -1,0 +1,230 @@
+%YAML 1.2
+---
+name: LuaVEXT # Base LuaExtnded by viluon, expanded to VEXT by MajorVictory
+comment: "LuaVEXT Syntax: version 1.0"
+file_extensions:
+  - lua
+scope: source.lua
+variables:
+  number: '(?<![\d.])\b0[xX][a-fA-F\d\.]+([pP][\-\+]?\d+)?|\b\d+(\.\d+)?([eE]-?\d+)?|\.\d+([eE]-?\d+)?'
+contexts:
+  main:
+    - match: |-
+        (?x:
+          (?<![^.]\.|:)\b((Damage|DebugGeometry|Impulse|Message|NetSocket)Type
+          |(EntryInput|Material|RayCast|SpatialQuery)Flags|HealthStateAction
+          |MediaHint|MessageCategory|NetSocketFamily|RemoteCommandFlag
+          |ResourceCompartment|SpectatorCameraMode|UIAction|WeaponState)\b(?:\.{1}([a-zA-Z0-9_\-]+))?
+        )
+      captures:
+        1: constant.language.enum.lua
+        4: constant.language.enum.lua
+    - match: '\b(function)\s+'
+      scope: meta.function.lua
+      captures:
+        1: keyword.control.lua
+      push: function_def_name
+    - match: '{{number}}'
+      scope: constant.numeric.lua
+    - match: "'"
+      captures:
+        0: punctuation.definition.string.begin.lua
+      scope: string.quoted.single.lua
+      push: string_quoted_single
+    - match: '"'
+      captures:
+        0: punctuation.definition.string.begin.lua
+      push: string_quoted_double
+    - match: '(?<!--)\[(=*)\['
+      captures:
+        0: punctuation.definition.string.begin.lua
+      push: string_quoted_multiline
+    - match: '--\[(=*)\['
+      captures:
+        0: punctuation.definition.comment.lua
+      push: comment_block
+    - match: '(--)(?!\[\[).*$\n?'
+      scope: comment.line.double-dash.lua
+      captures:
+        1: punctuation.definition.comment.lua
+    - match: \b(break|do|else(if|)|for|if|return|then|repeat|while|until|end|function|local|in)\b
+      scope: keyword.control.lua
+    - match: '(?<![^.]\.|:)\b(false|nil|true|_G|_VERSION|math\.(pi|huge|(max|min)integer)|utf8\.charpattern)\b|(?<![.])\.{3}(?!\.)'
+      scope: constant.language.lua
+    - match: '(?<![^.]\.|:)\b(self)\b'
+      scope: variable.language.self.lua
+    - match: '(?<![^.]\.|:)\b(error)\s*(?=[\(''"])'
+      captures:
+        1: support.function.lua
+        2: none
+      push: error_call_start
+    - match: '(?<![^.]\.|:)\b(assert|class|collectgarbage|error|get(fenv|metatable)|(i|)pairs|module|next|pcall|print|raw(equal|get|set)|require|select|set(fenv|metatable)|to(number|string)|type|unpack|warn|xpcall)\b(?=[( {"''\[])'
+      scope: support.function.lua
+    - match: '(?<![^.]\.|:)\b(coroutine\.(close|create|isyieldable|resume|running|status|wrap|yield)|json\.(encode|decode)|string\.(byte|char|ends|find|format|gmatch|gsub|len|lower|match|pack|packsize|rep|reverse|sub|starts|unpack|upper)|table\.(concat|insert|move|pack|remove|sort|unpack)|math\.(abs|acos|asin|atan|ceil|cos|deg|exp|floor|fmod|log|max|min|modf|rad|random|randomseed|sin|sqrt|tan|tointeger|type|ult)|os\.(clock|date|difftime|time)|package\.(loaded|preload|searchers)|utf8\.(char|codes|codepoint|len|offset))\b(?=[( {"''\[])'
+      scope: support.function.library.lua
+    - match: \b(and|or|not)\b
+      scope: keyword.operator.lua
+    - match: '\+|-|%|&|#|\*|\/|\^|\||==?|~=?|<=?|>=?|(?<!\.)\.{2}(?!\.)'
+      scope: keyword.operator.lua
+    - match: |-
+        (?x:
+          (?<![^.]\.|:)\b((Collision|DebrisSpawn|(Float|Int|Transform)Parameter|)Event|AimAssist
+          |AxisAlignedBox|ContainerCallback|DatabasePartition|DataContainer
+          |Entity(Bus|CreationParams|Event|Iterator|)|EntryInput|FieldInformation
+          |Guid|GunSway(Deviation|)|Hook(Context|)|Http(Options|Response)|ImpulseData
+          |LinearTransform|Message|NetSocket|PhysicsEntityBase|Quat(Transform|)|RayCastHit
+          |SpatialEntity|TypeInformation|Vec[2-4]|WeaponFiring)\b(?=[( {"''\[])
+        )
+      captures:
+        1: support.class.shared.lua
+    - match: |-
+        (?x:
+          (?<![^.]\.|:)\b((Entity|Resource)Manager|Events|Hooks|(Math|Shared)Utils|Net)\b(?=[:])
+        )
+      captures:
+        1: support.class.shared.lua
+    - match: |-
+        (?x:
+          (?<![^.]\.|:)\b((CapturePoint|Controllable|Explosion|Game|KillCounter|Physics|Soldier)Entity
+          |ClientPlayerEvent|CollisionInfo|Damage(Giver|)Info
+          |NetEvent|Player|Soldier(Weapon(sComponent|)))\b(?=[( {"''\[])
+        )
+      captures:
+        1: support.class.both.lua
+    - match: |-
+        (?x:
+          (?<![^.]\.|:)\b(NetEvents|(Chat|Player)Manager)\b(?=[:])
+        )
+      captures:
+        1: support.class.both.lua
+    - match: |-
+        (?x:
+          (?<![^.]\.|:)\b(((Camera|Shader)Params|CharacterLighting|ColorCorrection|DamageEffect
+          |Debug|Dof|DynamicAO|DynamicEnvmap|Enlighten|FilmGrain|Fog|LensScope|MotionBlur
+          |OutdoorLight|PlanarReflection|ScreenEffect|Sky|SunFlare|Tonemap|Vignette|Wind)Data
+          |(LifeCounter|Sound|TicketCounter)Entity|AimingSimulation|ClientDoublePlayerEvent
+          |ConceptCache|ConsoleCommand|DebugVertex|EffectParams|RagdollComponent|VisualEnvironmentState)\b(?=[( {"''\[])
+        )
+      captures:
+        1: support.class.client.lua
+    - match: '(?<![^.]\.|:)\b(ClientUtils|Console|DebugRenderer|(Effect|Input|Raycast|Spectator|VisualEnvironment)Manager|WebUI)\b(?=[:])'
+      captures:
+        1: support.class.client.lua
+    - match: '(?<![^.]\.|:)\b(ServerDoublePlayerEvent|SQLBlob)\b(?=[( {"''\[])'
+      captures:
+        1: support.class.server.lua
+    - match: '(?<![^.]\.|:)\b(RCON|SQL|ServerUtils|(TeamSquad|Ticket)Manager)\b(?=[:])'
+      captures:
+        1: support.class.server.lua
+    - match: '([a-zA-Z_.:]+[.:])?([a-zA-Z_]\w*)\s*(?=\(|\"|''|\[(\=*)\[|\{)'
+      captures:
+        2: variable.function.lua
+  function_def_name:
+    - match: '([a-zA-Z_.:]+[.:])?([a-zA-Z_]\w*)\s*'
+      captures:
+        1: entity.name.function.scope.lua
+        2: entity.name.function.lua
+    - match: '(\()'
+      captures:
+        1: punctuation.definition.parameters.begin.lua
+      set: function_def_args
+  function_def_args:
+    - match: '([^)]*)'
+      captures:
+        1: variable.parameter.function.lua
+    - match: '(\))'
+      captures:
+        1: punctuation.definition.parameters.end.lua
+      pop: true
+  error_call_start:
+    - match: "'"
+      captures:
+        0: punctuation.definition.string.begin.lua
+      set: error_string_quoted_single
+    - match: '"'
+      captures:
+        0: punctuation.definition.string.begin.lua
+      set: error_string_quoted_double
+    - match: '(?<!--)\[(=*)\['
+      captures:
+        0: punctuation.definition.string.begin.lua
+      set: error_string_quoted_multiline
+    - match: '\('
+      captures:
+        0: none
+      set: error_parens
+  error_parens:
+    - match: '\('
+      captures:
+        0: none
+      push: error_parens
+    - match: '\)'
+      pop: true
+    - match: "'"
+      captures:
+        0: punctuation.definition.string.begin.lua
+      push: error_string_quoted_single
+    - match: '"'
+      captures:
+        0: punctuation.definition.string.begin.lua
+      push: error_string_quoted_double
+    - match: '(?<!--)\[(=*)\['
+      captures:
+        0: punctuation.definition.string.begin.lua
+      push: error_string_quoted_multiline
+    - include: main
+  error_string_quoted_single:
+    - meta_scope: sublimelinter.mark.error
+    - match: "'"
+      captures:
+        0: punctuation.definition.string.end.lua
+      pop: true
+    - include: string
+  error_string_quoted_double:
+    - meta_scope: sublimelinter.mark.error
+    - match: '"'
+      captures:
+        0: punctuation.definition.string.end.lua
+      pop: true
+    - include: string
+  error_string_quoted_multiline:
+    - meta_scope: sublimelinter.mark.error
+    - match: '\]\1\]'
+      captures:
+        0: punctuation.definition.string.end.lua
+      pop: true
+    - include: string
+  string_quoted_single:
+    - meta_scope: string.quoted.single.lua
+    - match: "'"
+      captures:
+        0: punctuation.definition.string.end.lua
+      pop: true
+    - include: string
+  string_quoted_double:
+    - meta_scope: string.quoted.double.lua
+    - match: '"'
+      captures:
+        0: punctuation.definition.string.end.lua
+      pop: true
+    - include: string
+  string_quoted_multiline:
+    - meta_scope: string.quoted.other.multiline.lua
+    - match: '\]\1\]'
+      captures:
+        0: punctuation.definition.string.end.lua
+      pop: true
+    - include: string
+  comment_block:
+    - meta_scope: comment.block.lua
+    - match: '\]\1\]'
+      captures:
+        0: punctuation.definition.comment.lua
+      pop: true
+  string:
+    - match: '\\([abfnrtv\\"'']|\r?\n|\n\r?|\d\d?\d?)'
+      scope: constant.character.escape.lua
+    - match: '\\[xX][0-9a-fA-F][0-9a-fA-F]'
+      scope: constant.character.escape.lua
+    - match: '\\u\{[0-9a-fA-F]{,7}\}'
+      scope: constant.character.escape.lua

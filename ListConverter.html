@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<head>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">
+	<title>List Converter</title>
+	<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<style type="text/css">
+		body {
+			background-color: rgb(20,20,20);
+			padding: 2em;
+			text-align: center;
+		}
+		body > div {
+			margin: 0px auto;
+			text-align: center;
+			outline: 1px solid red;
+		}
+		body > div > * {
+			margin: 0px auto;
+			text-align: center;
+		}
+		textarea {
+			width: 90%;
+			height: 7em;
+			display: block;
+		}
+		button {
+			font-size: 125%;
+		}
+	</style>
+</head>
+<body>
+	<div>
+		<textarea id="input" placeholder="Input List"></textarea>
+		<button id="convert">/\---Convert---\/</button>
+		<textarea id="output" placeholder="Output Regex"></textarea>
+	</div>
+	<script type="text/javascript">
+		$('#convert').click(function() {
+			$('#output').val(convertList($('#input').val()));
+		});
+
+		function convertList(input = '') {
+
+			let output = '';
+			let lines = input.split("\n");
+
+			let lastwordset = [];
+			let lastBaseWord = '';
+
+			for (var i = 0; i < lines.length; i++) {
+				let line = lines[i].trim();
+
+				const words = [...line.matchAll(/[A-Z]+[a-z]*/g)].map(entry => {
+					return entry[0];
+				});
+
+				console.log('words', words);
+
+				let lastIndex = 0;
+				let baseWord = '';
+				let nextWord = '';
+				while (words[lastIndex] == lastwordset[lastIndex]) {
+					baseWord += words[lastIndex];
+					lastIndex++;
+				}
+				if (baseWord == '') {
+					baseWord = words[0];
+					lastIndex = 1;
+				}
+
+				if (words.length > lastIndex) {
+					nextWords = words.slice(lastIndex);
+				}
+
+				console.log('baseWord', baseWord, 'nextWords', nextWords);
+				output += `${baseWord}\n`;
+
+
+				lastwordset = words;
+				lastBaseWord = baseWord;
+
+			}
+
+			return output;
+		}
+
+		function addWord(word, baseWord, list) {
+
+
+
+
+		}
+
+	</script>
+</body>
+</html>

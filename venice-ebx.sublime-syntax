@@ -1,0 +1,84 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+name: EBXVEXT
+comment: "EBX Syntax: version 1.0"
+file_extensions: [ txt, ebx ]
+scope: source.ebx
+
+variables:
+  guid : '[0-9A-F]{8}\-[0-9A-F]{4}\-[0-9A-F]{4}\-[0-9A-F]{4}\-[0-9A-F]{12}'
+  integer: '(?:[-+]?\d+)'
+  number: '[-+]?(?:(?:\d*\.\d+(?:[eE]{{integer}})*)|{{integer}})'
+
+contexts:
+  # The prototype context is prepended to all contexts but those setting
+  # meta_include_prototype: false.
+  prototype:
+    - include: comments
+
+  main:
+    # The main context is the initial starting point of our syntax.
+    # Include other contexts from here (or specify them directly).
+    - include: constants
+    - include: numbers
+    - include: instances
+    - include: properties
+    - include: eventnames
+
+  constants:
+    # Keywords are if, else for and while.
+    # Note that blackslashes don't need to be escaped within single quoted
+    # strings in YAML. When using single quoted strings, only single quotes
+    # need to be escaped: this is done by using two single quotes next to each
+    # other.
+    - match: '\b(True|False|nullGuid|nullArray|nullString)\b'
+      scope: keyword.control.ebx
+
+  numbers:
+    - match: '\b{{number}}\b'
+      scope: constant.numeric.ebx
+    - match: '\b{{guid}}\b'
+      scope: constant.numeric.ebx
+
+  instances:
+    - match: '^([A-Za-z]+) ({{guid}})\b'
+      captures:
+        1: storage.type.ebx
+        2: constant.numeric.ebx
+    - match: '^\s+([a-zA-Z0-9\$]*?)(::)([a-zA-Z0-9]+)\b'
+      captures:
+        1: entity.other.attribute-name.ebx
+        2: variable.ebx
+        3: storage.type.ebx
+    - match: '^\s+([a-zA-Z0-9]*?)\(([0-9]+)\) (({{guid}}))\b'
+      captures:
+        1: entity.other.attribute-name.ebx
+        2: constant.numeric.ebx
+        3: constant.numeric.ebx
+    - match: '^\s+([a-zA-Z0-9]*?)\(([0-9]+)\)(::)([a-zA-Z0-9]+)\b'
+      captures:
+        1: entity.other.attribute-name.ebx
+        2: constant.numeric.ebx
+        3: variable.ebx
+        4: storage.type.ebx
+
+  properties:
+    - match: '^\s+([a-zA-Z0-9]+)'
+      captures:
+        1: variable
+
+  eventnames:
+    - match: '\s+\((\w+)\)'
+      captures:
+        1: variable.parameter.ebx
+
+  comments:
+    # Comments begin with a '#' and finish at the end of the line.
+    - match: '#'
+      scope: punctuation.definition.comment.ebx
+      push:
+        # This is an anonymous context push for brevity.
+        - meta_scope: comment.line.double-slash.ebx
+        - match: $\n?
+          pop: true
