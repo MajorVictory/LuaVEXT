@@ -4,7 +4,6 @@
 name: EBXVEXT
 comment: "EBX Syntax: version 1.0"
 file_extensions:
-  - txt
   - ebx
 scope: source.ebx
 

@@ -3,6 +3,6 @@
 	${0:$SELECTION}
 end]]></content>
 	<tabTrigger>while</tabTrigger>
-	<scope>source.luae - string</scope>
+	<scope>source.lua.vext - string</scope>
 	<description>while true do</description>
 </snippet>

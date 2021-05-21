@@ -4,6 +4,6 @@ for ${1:k}, ${2:v} in pairs( ${3:table_name} ) do
 	${0:print( $1, $2 )}
 end]]></content>
 	<tabTrigger>dforp</tabTrigger>
-	<scope>source.luae - string</scope>
+	<scope>source.lua.vext - string</scope>
 	<description>Documented for k, v in pairs()</description>
 </snippet>

@@ -4,7 +4,7 @@ name: LuaVEXT # Base LuaExtended by viluon, converted to VEXT by MajorVictory
 comment: "LuaVEXT Syntax: version 1.0"
 file_extensions:
   - lua
-scope: source.lua
+scope: source.lua.vext
 variables:
   number: '(?<![\d.])\b0[xX][a-fA-F\d\.]+([pP][\-\+]?\d+)?|\b\d+(\.\d+)?([eE]-?\d+)?|\.\d+([eE]-?\d+)?'
 contexts:
